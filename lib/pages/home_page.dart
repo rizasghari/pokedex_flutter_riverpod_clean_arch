@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_flutter_riverpod/models/page_data.dart';
+import 'package:pokedex_flutter_riverpod/widgets/favorites_list_card.dart';
 
 import '../controllers/home_page_controller.dart';
 import '../providers/providers.dart';
-import '../widgets/favorites_list_tile.dart';
 import '../widgets/pokemon_list_tile.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -102,7 +102,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   crossAxisSpacing: 10,
                 ),
                 itemBuilder: (context, index) {
-                  return FavoritesListTile(
+                  return FavoritesListCard(
                     url: _favoritePokemons[index],
                   );
                 },

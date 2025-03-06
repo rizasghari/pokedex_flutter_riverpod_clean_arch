@@ -47,6 +47,12 @@ class _PokemonListTileState extends ConsumerState<PokemonListTile> {
   Widget _tile(BuildContext context, bool isLeading, Pokemon? pokemon) {
     return Skeletonizer(
       enabled: isLeading,
+      enableSwitchAnimation: true,
+      switchAnimationConfig: SwitchAnimationConfig(
+        duration: const Duration(milliseconds: 500),
+        switchInCurve: Curves.fastOutSlowIn,
+        switchOutCurve: Curves.fastOutSlowIn,
+      ),
       child: ListTile(
         leading: pokemon != null &&
                 pokemon.sprites != null &&

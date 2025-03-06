@@ -5,16 +5,16 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../models/pokemon.dart';
 import '../providers/providers.dart';
 
-class FavoritesListTile extends ConsumerStatefulWidget {
+class FavoritesListCard extends ConsumerStatefulWidget {
   final String url;
 
-  const FavoritesListTile({super.key, required this.url});
+  const FavoritesListCard({super.key, required this.url});
 
   @override
-  ConsumerState<FavoritesListTile> createState() => _FavoritesListTileState();
+  ConsumerState<FavoritesListCard> createState() => _FavoritesListTileState();
 }
 
-class _FavoritesListTileState extends ConsumerState<FavoritesListTile> {
+class _FavoritesListTileState extends ConsumerState<FavoritesListCard> {
   late AsyncValue<Pokemon?> _pokemonData;
   late List<String> _favoritePokemons;
 
@@ -33,20 +33,27 @@ class _FavoritesListTileState extends ConsumerState<FavoritesListTile> {
   Widget _buildTile(BuildContext context) {
     return _pokemonData.when(
       data: (pokemon) {
-        return _tile(context, false, pokemon);
+        return _card(context, false, pokemon);
       },
       error: (error, stackTrace) {
         return Text(error.toString());
       },
       loading: () {
-        return _tile(context, true, null);
+        return _card(context, true, null);
       },
     );
   }
 
-  Widget _tile(BuildContext context, bool isLeading, Pokemon? pokemon) {
+  Widget _card(BuildContext context, bool isLeading, Pokemon? pokemon) {
     return Skeletonizer(
       enabled: isLeading,
+      ignoreContainers: true,
+      enableSwitchAnimation: true,
+      switchAnimationConfig: SwitchAnimationConfig(
+        duration: const Duration(milliseconds: 500),
+        switchInCurve: Curves.fastOutSlowIn,
+        switchOutCurve: Curves.fastOutSlowIn,
+      ),
       child: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -85,6 +92,7 @@ class _FavoritesListTileState extends ConsumerState<FavoritesListTile> {
                 : CircleAvatar(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   "${pokemon?.moves?.length ?? 0} moves",
