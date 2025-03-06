@@ -3,12 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_flutter_riverpod/models/page_data.dart';
 
 import '../controllers/home_page_controller.dart';
+import '../providers/providers.dart';
+import '../widgets/favorites_list_tile.dart';
 import '../widgets/pokemon_list_tile.dart';
-
-final homePageControllerProvider =
-    StateNotifierProvider<HomePageController, HomePageData>(
-  (ref) => HomePageController(HomePageData.initial()),
-);
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -20,6 +17,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   late HomePageController _homePageController;
   late HomePageData _homePageData;
+  late List<String> _favoritePokemons;
   final ScrollController _scrollCtrl = ScrollController();
 
   @override
@@ -46,8 +44,13 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     _homePageController = ref.watch(homePageControllerProvider.notifier);
     _homePageData = ref.watch(homePageControllerProvider);
+    _favoritePokemons = ref.watch(favoritesProvider);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("PokeDex"),
+        centerTitle: true,
+      ),
       body: _buildUI(context),
     );
   }
@@ -64,10 +67,48 @@ class _HomePageState extends ConsumerState<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _favoritePokemonsList(),
+              SizedBox(height: 30),
               _allPokemonsList(context),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _favoritePokemonsList() {
+    return _favoritePokemons.isEmpty ? Container() : SizedBox(
+      width: MediaQuery.sizeOf(context).width,
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              "Favorites",
+              style: TextStyle(
+                fontSize: 25,
+              ),
+            ),
+            SizedBox(
+              height: _favoritePokemons.length == 1 ? MediaQuery.sizeOf(context).height * 0.2 : MediaQuery.sizeOf(context).height * 0.4,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: _favoritePokemons.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _favoritePokemons.length == 1 ? 1 : 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
+                itemBuilder: (context, index) {
+                  return FavoritesListTile(
+                    url: _favoritePokemons[index],
+                  );
+                },
+              ),
+            ),
+          ],
       ),
     );
   }
